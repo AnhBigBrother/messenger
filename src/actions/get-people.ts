@@ -20,9 +20,11 @@ const getPeople = async () => {
       },
       {
         $project: {
+          _id: 1,
           name: 1,
           email: 1,
           image: 1,
+          createdAt: 1,
         },
       },
     ]);

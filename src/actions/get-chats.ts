@@ -6,7 +6,7 @@ import { getServerSession } from 'next-auth';
 export default async function getChats() {
   const session = await getServerSession();
   if (!session?.user?.email) {
-    return { error: 'Something went wrong, try later!' };
+    return { error: 'Unauthorized!' };
   }
 
   const currentUserEmail = session.user.email;
@@ -20,24 +20,57 @@ export default async function getChats() {
           from: 'chats',
           localField: 'chats',
           foreignField: '_id',
-          as: 'chats_mapping',
+          as: 'chats',
         },
       },
       {
-        $set: {
-          chats: '$chats_mapping',
+        $unwind: '$chats',
+      },
+      {
+        $lookup: {
+          from: 'users',
+          foreignField: '_id',
+          localField: 'chats.members',
+          as: 'chats.members',
         },
       },
-      { $unset: ['chats_mapping'] },
       {
-        $project: {
-          chats: 1,
+        $sort: {
+          'chats.updatedAt': -1,
+        },
+      },
+      // {
+      //   $group: {
+      //     _id: '$_id',
+      //     chats: {
+      //       $addToSet: '$chats',
+      //     },
+      //   },
+      // },
+      // {
+      //   $unwind: '$chats',
+      // },
+      {
+        $replaceRoot: {
+          newRoot: '$chats',
+        },
+      },
+      {
+        $unset: ['members.chats', 'members.accounts', 'members.password', 'members.createdAt', 'members.updatedAt', 'members.__v'],
+      },
+      {
+        $lookup: {
+          from: 'messages',
+          localField: 'lastMessage',
+          foreignField: '_id',
+          as: 'lastMessage',
         },
       },
     ]);
 
-    return JSON.parse(JSON.stringify(data[0].chats));
+    return JSON.parse(JSON.stringify(data));
   } catch (error) {
+    console.log(error);
     return { error: 'Something went wrong, try later!' };
   }
 }

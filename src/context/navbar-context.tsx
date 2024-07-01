@@ -3,10 +3,10 @@
 import { createContext, useContext, useState } from 'react';
 
 type navbarContextType = {
-  activeSection: string;
-  setActiveSection: React.Dispatch<React.SetStateAction<string>>;
-  activeSearchBox: boolean;
-  setActiveSearchBox: React.Dispatch<React.SetStateAction<boolean>>;
+  activeSection: 'chat' | 'people';
+  setActiveSection: React.Dispatch<React.SetStateAction<'chat' | 'people'>>;
+  activeSideBox: boolean;
+  setActiveSideBox: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const NavbarContext = createContext<navbarContextType | null>(null);
@@ -18,15 +18,15 @@ export const useNavbarContext = () => {
 };
 
 export default function NavbarContextProvider({ children }: { children: React.ReactNode }) {
-  const [activeSection, setActiveSection] = useState<string>('chat');
-  const [activeSearchBox, setActiveSearchBox] = useState<boolean>(true);
+  const [activeSection, setActiveSection] = useState<'chat' | 'people'>('chat');
+  const [activeSideBox, setActiveSideBox] = useState<boolean>(true);
   return (
     <NavbarContext.Provider
       value={{
         activeSection,
         setActiveSection,
-        activeSearchBox,
-        setActiveSearchBox,
+        activeSideBox,
+        setActiveSideBox,
       }}>
       {children}
     </NavbarContext.Provider>

@@ -55,7 +55,7 @@ const authOption: NextAuthOptions = {
   },
   callbacks: {
     // https://next-auth.js.org/configuration/callbacks
-    async signIn({ user, account }) {
+    async signIn({ user, account, profile, email, credentials }) {
       if (account && account.type !== 'credentials') {
         let dbUser;
         let dbAccount;
@@ -98,13 +98,36 @@ const authOption: NextAuthOptions = {
       // The redirect callback is called anytime the user is redirected to a callback URL (e.g. on signin or signout).By default only URLs on the same URL as the site are allowed, use the redirect callback to customise that behaviour.
       return baseUrl;
     },
-    async session({ session, token }) {
-      // The session callback is called whenever a session is checked.
-      return session;
-    },
-    async jwt({ token }) {
+    async jwt({ token, user, account, profile, session, trigger }) {
       // This callback is called whenever a JSON Web Token is created (i.e. at sign in) or updated (i.e whenever a session is accessed in the client). The returned value will be encrypted, and it is stored in a cookie.
+
+      await connectdb();
+      const email = token.email;
+
+      // use update function in useSession hook to trigger update jwt, the session parameter can be use here!
+      if (trigger === 'update') {
+        const currentUser = await User.findOne({ email });
+        token._id = currentUser._id.toString();
+        token.name = currentUser.name;
+        token.picture = currentUser.image;
+        return token;
+      }
+
+      const currentUser = await User.findOne({ email });
+      token._id = currentUser._id.toString();
+      token.name = currentUser.name;
+      token.picture = currentUser.image;
       return token;
+    },
+    async session({ session, token, user }) {
+      // The session callback is called whenever a session is checked. By default, only a subset of the token is returned for increased security. If you want to make something available you added to the token (like access_token and user.id from above) via the jwt() callback, you have to explicitly forward it here to make it available to the client.
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          _id: token._id,
+        },
+      };
     },
   },
 };

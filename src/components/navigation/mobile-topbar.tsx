@@ -7,12 +7,12 @@ import { HiChatBubbleOvalLeftEllipsis } from 'react-icons/hi2';
 
 export const MobileTopbar = () => {
   return (
-    <nav className='z-10 fixed md:hidden left-0 top-0 h-16 w-full bg-white px-3 flex flex-row items-center justify-between border-b border-gray-200'>
+    <nav className='z-20 fixed md:hidden left-0 top-0 h-16 w-full bg-white px-3 flex flex-row items-center justify-between border-b border-gray-200'>
       <ul className='flex flex-row w-fit h-full gap-x-2 items-center'>
         <NavItem sectionName='chat'>
           <HiChatBubbleOvalLeftEllipsis className='w-6 h-6' />
         </NavItem>
-        <NavItem sectionName='contact'>
+        <NavItem sectionName='people'>
           <BsPeopleFill className='w-6 h-6' />
         </NavItem>
       </ul>

@@ -5,6 +5,10 @@ const chatDefinition = {
     type: String,
     default: '',
   },
+  image: {
+    type: String,
+    default: '',
+  },
   isGroup: {
     type: Boolean,
     required: true,
@@ -14,6 +18,10 @@ const chatDefinition = {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
     required: true,
     default: [],
+  },
+  lastMessage: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'message',
   },
   members: {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],

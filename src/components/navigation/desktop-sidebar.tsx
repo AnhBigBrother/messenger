@@ -12,7 +12,7 @@ export const DesktopSidebar = () => {
         <NavItem sectionName='chat'>
           <HiChatBubbleOvalLeftEllipsis className='w-6 h-6' />
         </NavItem>
-        <NavItem sectionName='contact'>
+        <NavItem sectionName='people'>
           <BsPeopleFill className='w-6 h-6' />
         </NavItem>
       </ul>

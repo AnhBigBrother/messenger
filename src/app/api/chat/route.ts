@@ -1,4 +1,5 @@
 import { connectdb } from '@/lib/connectdb';
+import { pusherServer } from '@/lib/pusher';
 import Chat from '@/models/chat-model';
 import User from '@/models/user-model';
 import { getServerSession } from 'next-auth';
@@ -40,6 +41,9 @@ export async function POST(req: Request) {
       isGroup,
       members,
     });
+    if (isGroup) {
+      newChat.image = '/images/group.png';
+    }
 
     const updateMembers = members.map(async (chatUserId: string) => {
       const user = await User.findById(chatUserId);
@@ -49,6 +53,11 @@ export async function POST(req: Request) {
     });
     await Promise.all(updateMembers);
     await newChat.save();
+
+    const triggerMember = members.map(async (_id: any) => {
+      pusherServer.trigger(_id.toString(), 'chat:new', newChat._doc);
+    });
+    await Promise.all(triggerMember);
 
     return NextResponse.json(newChat._doc);
   } catch (error) {
