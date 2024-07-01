@@ -66,10 +66,10 @@ const ChatListItem = ({ chat, user }: { chat: TChat; user: TSessionUser | undefi
         size='sm'
         active={false}
       />
-      <div className='flex flex-col justify-between'>
+      <div className='flex-grow flex flex-col justify-between'>
         <div className='flex flex-row justify-between items-center'>
           <p className='font-semibold w-28 truncate text-sm'>{chat?.name}</p>
-          {lastMessage && <p className={`text-[0.7rem] text-nowrap ${hasSeen ? 'text-gray-500' : 'text-black font-medium'}`}>{format(new Date(lastMessage.updatedAt!), 'p')}</p>}
+          {lastMessage && <p className={`w-fit text-[0.7rem] text-nowrap ${hasSeen ? 'text-gray-500' : 'text-black font-medium'}`}>{format(new Date(lastMessage.updatedAt!), 'p')}</p>}
         </div>
         <p className={`text-xs md:w-40 truncate ${hasSeen ? 'text-gray-500' : 'text-black font-medium'}`}>{lastMessageText}</p>
       </div>
@@ -85,7 +85,8 @@ export const ChatSection = () => {
   console.log(allChats);
   useEffect(() => {
     const newChatHandler = (newChat: TChat) => {
-      setAllChats(pre => [newChat, ...pre]);
+      const formatedChat = formatChatInfo(newChat);
+      setAllChats(pre => [formatedChat, ...pre]);
     };
     if (user?._id) {
       pusherClient.subscribe(user._id);
