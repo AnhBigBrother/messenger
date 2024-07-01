@@ -84,6 +84,7 @@ export const ChatSection = () => {
   const [allChats, setAllChats] = useState<TChat[]>([]);
   const user: TSessionUser | undefined = useSession().data?.user;
   const { setActiveSection, activeSideBox } = useNavbarContext();
+
   useEffect(() => {
     if (user && user._id) {
       const newChatHandler = (newChat: TChat) => {
@@ -99,6 +100,7 @@ export const ChatSection = () => {
     }
   }, [user]);
   useEffect(() => {
+    console.log(user);
     if (activeSideBox && user && user._id) {
       setIsPending(true);
       getChats()
