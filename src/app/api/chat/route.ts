@@ -45,17 +45,20 @@ export async function POST(req: Request) {
       newChat.image = '/images/group.png';
     }
 
+    const chatMems: any[] = [];
     const updateMembers = members.map(async (chatUserId: string) => {
       const user = await User.findById(chatUserId);
       if (!user) return new NextResponse('Invalid members id', { status: 400 });
       user.chats.push(newChat._id);
+      chatMems.push({ name: user.name, _id: user._id, email: user.email, image: user.image });
       await user.save();
     });
-    await Promise.all(updateMembers);
+
     await newChat.save();
+    await Promise.all(updateMembers);
 
     const triggerMember = members.map(async (_id: any) => {
-      pusherServer.trigger(_id.toString(), 'chat:new', newChat._doc);
+      pusherServer.trigger(_id.toString(), 'chat:new', { ...newChat._doc, members: chatMems });
     });
     await Promise.all(triggerMember);
 

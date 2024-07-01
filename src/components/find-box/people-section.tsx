@@ -11,7 +11,6 @@ import toast from 'react-hot-toast';
 import { GoXCircleFill } from 'react-icons/go';
 import { LuPlus } from 'react-icons/lu';
 import useSearchResult from '../../hooks/useSearchResult';
-import { format } from 'date-fns';
 
 const PeopleListItem = ({ user, selectedMap, isGroup }: { user: TPeople; selectedMap: Map<string, boolean>; isGroup: boolean }) => {
   const { setActiveSideBox, setActiveSection } = useNavbarContext();
@@ -70,7 +69,7 @@ const PeopleListItem = ({ user, selectedMap, isGroup }: { user: TPeople; selecte
 };
 
 export const PeopleSection = () => {
-  const { setActiveSideBox } = useNavbarContext();
+  const { setActiveSideBox, activeSideBox } = useNavbarContext();
   const router = useRouter();
   const [isPending, setIsPending] = useState<boolean>(false);
   const [allPeople, setAllPeople] = useState<TPeople[]>([]);
@@ -80,13 +79,15 @@ export const PeopleSection = () => {
   const [isStartingChat, setIsStartingChat] = useState<boolean>(false);
 
   useEffect(() => {
-    setIsPending(true);
-    getPeople()
-      .then(people => {
-        setAllPeople(people);
-      })
-      .finally(() => setIsPending(false));
-  }, []);
+    if (activeSideBox) {
+      setIsPending(true);
+      getPeople()
+        .then(people => {
+          setAllPeople(people);
+        })
+        .finally(() => setIsPending(false));
+    }
+  }, [activeSideBox]);
 
   const { showData: showPeople, search, setSearch } = useSearchResult<TPeople>({ allData: allPeople, setIsPending });
 

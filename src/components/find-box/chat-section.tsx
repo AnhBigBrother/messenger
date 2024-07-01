@@ -43,18 +43,20 @@ const ChatListItem = ({ chat, user }: { chat: TChat; user: TSessionUser | undefi
   };
 
   useEffect(() => {
-    const newMessageHandler = (mess: TMessage) => {
-      if (mess.chat === chat._id) {
-        setLastMessage(mess);
-      }
-    };
-    pusherClient.subscribe(chat._id!);
-    pusherClient.bind('message:new', newMessageHandler);
+    if (chat && chat._id) {
+      const newMessageHandler = (mess: TMessage) => {
+        if (mess.chat === chat._id) {
+          setLastMessage(mess);
+        }
+      };
+      pusherClient.subscribe(chat._id!);
+      pusherClient.bind('message:new', newMessageHandler);
 
-    return () => {
-      pusherClient.unsubscribe(chat._id!);
-      pusherClient.unbind('message:new', newMessageHandler);
-    };
+      return () => {
+        pusherClient.unsubscribe(chat._id!);
+        pusherClient.unbind('message:new', newMessageHandler);
+      };
+    }
   }, [chat]);
 
   return (
@@ -82,22 +84,19 @@ export const ChatSection = () => {
   const [allChats, setAllChats] = useState<TChat[]>([]);
   const user: TSessionUser | undefined = useSession().data?.user;
   const { setActiveSection, activeSideBox } = useNavbarContext();
-  console.log(allChats);
   useEffect(() => {
-    const newChatHandler = (newChat: TChat) => {
-      const formatedChat = formatChatInfo(newChat);
-      setAllChats(pre => [formatedChat, ...pre]);
-    };
-    if (user?._id) {
+    if (user && user._id) {
+      const newChatHandler = (newChat: TChat) => {
+        const formatedChat = formatChatInfo(newChat, user);
+        setAllChats(pre => [formatedChat, ...pre]);
+      };
       pusherClient.subscribe(user._id);
       pusherClient.bind('chat:new', newChatHandler);
-    }
-    return () => {
-      if (user?._id) {
-        pusherClient.unsubscribe(user._id);
+      return () => {
+        pusherClient.unsubscribe(user._id!);
         pusherClient.unbind('chat:new', newChatHandler);
-      }
-    };
+      };
+    }
   }, [user]);
   useEffect(() => {
     if (activeSideBox && user && user._id) {
