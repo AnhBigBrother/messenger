@@ -49,9 +49,21 @@ export const UserAvatar = () => {
         return res.json();
       })
       .then(updatedUser => {
-        if (updatedUser) update();
+        if (updatedUser) {
+          update({
+            ...session,
+            data: {
+              ...session.data,
+              user: {
+                ...session.data?.user,
+                name: name,
+                image: avatarUrl,
+              },
+            },
+          });
+        }
       })
-      .then(() => toast.success('Your profile has up to date!'))
+      .then(() => toast.success('Your profile is up to date!'))
       .catch(err => toast.error('Something went wrong, try later!'))
       .finally(() => {
         setIsPending(false);

@@ -101,17 +101,15 @@ const authOption: NextAuthOptions = {
     async jwt({ token, user, account, profile, session, trigger }) {
       // This callback is called whenever a JSON Web Token is created (i.e. at sign in) or updated (i.e whenever a session is accessed in the client). The returned value will be encrypted, and it is stored in a cookie.
 
-      await connectdb();
-      const email = token.email;
-
       // use update function in useSession hook to trigger update jwt, the session parameter can be use here!
       if (trigger === 'update') {
-        const currentUser = await User.findOne({ email });
-        token._id = currentUser._id.toString();
-        token.name = currentUser.name;
-        token.picture = currentUser.image;
+        if (session.data.user.name) token.name = session.data.user.name;
+        if (session.data.user.image) token.picture = session.data.user.image;
         return token;
       }
+
+      await connectdb();
+      const email = token.email;
 
       const currentUser = await User.findOne({ email });
       token._id = currentUser._id.toString();
