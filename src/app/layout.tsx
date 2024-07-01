@@ -5,6 +5,7 @@ import { SessionProvider } from '@/context/session';
 import { getServerSession } from 'next-auth';
 import { Toaster } from 'react-hot-toast';
 import NavbarContextProvider from '@/context/navbar-context';
+import { authOption } from '@/configs/authOption';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,7 +19,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOption);
 
   return (
     <html lang='en'>

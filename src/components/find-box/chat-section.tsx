@@ -100,7 +100,6 @@ export const ChatSection = () => {
     }
   }, [user]);
   useEffect(() => {
-    console.log(user);
     if (activeSideBox && user && user._id) {
       setIsPending(true);
       getChats()

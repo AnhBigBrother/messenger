@@ -1,6 +1,4 @@
 import { Metadata } from 'next';
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Messenger | Sign in',
@@ -12,9 +10,5 @@ export default async function RegisterLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession();
-  if (session) {
-    redirect('/');
-  }
   return <div className='w-full h-full bg-sky-200'>{children}</div>;
 }
