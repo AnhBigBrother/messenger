@@ -71,7 +71,7 @@ const PeopleListItem = ({ user, selectedMap, isGroup }: { user: TPeople; selecte
 export const PeopleSection = () => {
   const { setActiveSideBox, activeSideBox } = useNavbarContext();
   const router = useRouter();
-  const [isPending, setIsPending] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [allPeople, setAllPeople] = useState<TPeople[]>([]);
   const [isGroup, setIsGroup] = useState<boolean>(false);
   const [groupName, setGroupName] = useState<string>('');
@@ -80,14 +80,17 @@ export const PeopleSection = () => {
 
   useEffect(() => {
     if (activeSideBox) {
-      setIsPending(true);
-      getPeople().then(people => {
-        setAllPeople(people);
-      });
+      setIsLoading(true);
+      getPeople()
+        .then(people => {
+          setAllPeople(people);
+        })
+        .catch(err => console.log(err))
+        .finally(() => setIsLoading(false));
     }
   }, [activeSideBox]);
 
-  const { showData: showPeople, search, setSearch } = useSearchResult<TPeople>({ allData: allPeople, setIsPending });
+  const { isPending, showData: showPeople, search, setSearch } = useSearchResult<TPeople>({ allData: allPeople, isLoading });
 
   const handleCancleGroup = () => {
     for (let x of Array.from(selectedMap.keys())) {

@@ -80,7 +80,7 @@ const ChatListItem = ({ chat, user }: { chat: TChat; user: TSessionUser | undefi
 };
 
 export const ChatSection = () => {
-  const [isPending, setIsPending] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [allChats, setAllChats] = useState<TChat[]>([]);
   const user: TSessionUser | undefined = useSession().data?.user;
   const { setActiveSection, activeSideBox } = useNavbarContext();
@@ -101,16 +101,19 @@ export const ChatSection = () => {
   }, [user]);
   useEffect(() => {
     if (activeSideBox && user && user._id) {
-      setIsPending(true);
-      getChats().then((chats: TChat[]) => {
-        for (let chat of chats) {
-          chat = formatChatInfo(chat, user);
-        }
-        setAllChats(chats);
-      });
+      setIsLoading(true);
+      getChats()
+        .then((chats: TChat[]) => {
+          for (let chat of chats) {
+            chat = formatChatInfo(chat, user);
+          }
+          setAllChats(chats);
+        })
+        .catch(err => console.log(err))
+        .finally(() => setIsLoading(false));
     }
   }, [user, activeSideBox]);
-  const { showData: showChats, search, setSearch } = useSearchResult({ allData: allChats, setIsPending });
+  const { isPending, showData: showChats, search, setSearch } = useSearchResult({ allData: allChats, isLoading });
 
   return (
     <div className='flex flex-col w-full h-full overflow-hidden'>

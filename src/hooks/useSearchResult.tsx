@@ -4,25 +4,31 @@ type hasName = {
   name?: string;
 };
 
-const useSearchResult = <T extends hasName>({ allData, setIsPending }: { allData: T[]; setIsPending: React.Dispatch<React.SetStateAction<boolean>> }) => {
+const useSearchResult = <T extends hasName>({ allData, isLoading }: { allData: T[]; isLoading: boolean }) => {
   const [showData, setShowData] = useState<T[]>([]);
   const [search, setSearch] = useState<string>('');
+  const [isPending, setIsPending] = useState<boolean>(true);
   useEffect(() => {
-    setIsPending(true);
-    const timmer = setTimeout(() => {
-      console.log('hi');
-      const patten = new RegExp(`${search}`, 'i');
-      const showChats: T[] = allData.filter(p => {
-        return patten.test(p.name!);
-      });
-      setShowData(showChats);
-      setIsPending(false);
-    }, 360);
+    let timmer: NodeJS.Timeout;
+    if (!isLoading) {
+      setIsPending(true);
+      timmer = setTimeout(() => {
+        console.log('hi');
+        const patten = new RegExp(`${search}`, 'i');
+        const showChats: T[] = allData.filter(p => {
+          return patten.test(p.name!);
+        });
+        setShowData(showChats);
+        setIsPending(false);
+      }, 300);
+    }
 
-    return () => clearTimeout(timmer);
-  }, [search, allData]);
+    return () => {
+      if (timmer) clearTimeout(timmer);
+    };
+  }, [search, isLoading]);
 
-  return { showData, search, setSearch };
+  return { isPending, showData, search, setSearch };
 };
 
 export default useSearchResult;
