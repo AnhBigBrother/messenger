@@ -71,7 +71,7 @@ const PeopleListItem = ({ user, selectedMap, isGroup }: { user: TPeople; selecte
 export const PeopleSection = () => {
   const { setActiveSideBox, activeSideBox } = useNavbarContext();
   const router = useRouter();
-  const [isPending, setIsPending] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(true);
   const [allPeople, setAllPeople] = useState<TPeople[]>([]);
   const [isGroup, setIsGroup] = useState<boolean>(false);
   const [groupName, setGroupName] = useState<string>('');
@@ -81,11 +81,9 @@ export const PeopleSection = () => {
   useEffect(() => {
     if (activeSideBox) {
       setIsPending(true);
-      getPeople()
-        .then(people => {
-          setAllPeople(people);
-        })
-        .finally(() => setIsPending(false));
+      getPeople().then(people => {
+        setAllPeople(people);
+      });
     }
   }, [activeSideBox]);
 

@@ -10,13 +10,14 @@ const useSearchResult = <T extends hasName>({ allData, setIsPending }: { allData
   useEffect(() => {
     setIsPending(true);
     const timmer = setTimeout(() => {
+      console.log('hi');
       const patten = new RegExp(`${search}`, 'i');
       const showChats: T[] = allData.filter(p => {
         return patten.test(p.name!);
       });
       setShowData(showChats);
       setIsPending(false);
-    }, 300);
+    }, 360);
 
     return () => clearTimeout(timmer);
   }, [search, allData]);

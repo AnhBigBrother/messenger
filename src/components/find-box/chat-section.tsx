@@ -80,7 +80,7 @@ const ChatListItem = ({ chat, user }: { chat: TChat; user: TSessionUser | undefi
 };
 
 export const ChatSection = () => {
-  const [isPending, setIsPending] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(true);
   const [allChats, setAllChats] = useState<TChat[]>([]);
   const user: TSessionUser | undefined = useSession().data?.user;
   const { setActiveSection, activeSideBox } = useNavbarContext();
@@ -102,14 +102,12 @@ export const ChatSection = () => {
   useEffect(() => {
     if (activeSideBox && user && user._id) {
       setIsPending(true);
-      getChats()
-        .then((chats: TChat[]) => {
-          for (let chat of chats) {
-            chat = formatChatInfo(chat, user);
-          }
-          setAllChats(chats);
-        })
-        .finally(() => setIsPending(false));
+      getChats().then((chats: TChat[]) => {
+        for (let chat of chats) {
+          chat = formatChatInfo(chat, user);
+        }
+        setAllChats(chats);
+      });
     }
   }, [user, activeSideBox]);
   const { showData: showChats, search, setSearch } = useSearchResult({ allData: allChats, setIsPending });
