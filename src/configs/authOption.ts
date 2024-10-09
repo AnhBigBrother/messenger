@@ -1,62 +1,62 @@
-import { type NextAuthOptions } from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import GoogleProvider from 'next-auth/providers/google';
-import GitHubProvider from 'next-auth/providers/github';
-import bcrypt from 'bcrypt';
-import User from '@/models/user-model';
-import { connectdb } from '@/lib/connectdb';
-import Account from '@/models/account-model';
+import { type NextAuthOptions } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
+import bcrypt from "bcrypt";
+import User from "@/models/user-model";
+import { connectdb } from "@/lib/connectdb";
+import Account from "@/models/account-model";
 
 const authOption: NextAuthOptions = {
   providers: [
     Credentials({
-      name: 'credentials',
+      name: "credentials",
       credentials: {
-        email: { label: 'Email', type: 'email', placeholder: 'bruhh@example.com' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: "Email", type: "email", placeholder: "bruhh@example.com" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials || !credentials.email || !credentials.password) {
-          throw new Error('Invaid credentials!');
+          throw new Error("Invaid credentials!");
         }
         await connectdb();
         const user = await User.findOne({
           email: credentials.email,
         });
         if (!user) {
-          throw new Error('User not found!');
+          throw new Error("User not found!");
         }
         if (!user.password) {
-          throw new Error('Email used with OAuth!');
+          throw new Error("Email used with OAuth!");
         }
         const isMatch = await bcrypt.compare(credentials.password, user.password);
         if (!isMatch) {
-          throw new Error('Wrong password!');
+          throw new Error("Wrong password!");
         }
 
         return user._doc;
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
     GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID || '',
-      clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+      clientId: process.env.GITHUB_CLIENT_ID || "",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
     }),
   ],
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/signin',
+    signIn: "/signin",
   },
   callbacks: {
     // https://next-auth.js.org/configuration/callbacks
     async signIn({ user, account, profile, email, credentials }) {
-      if (account && account.type !== 'credentials') {
+      if (account && account.type !== "credentials") {
         let dbUser;
         let dbAccount;
 
@@ -102,7 +102,7 @@ const authOption: NextAuthOptions = {
       // This callback is called whenever a JSON Web Token is created (i.e. at sign in) or updated (i.e whenever a session is accessed in the client). The returned value will be encrypted, and it is stored in a cookie.
 
       // use update function in useSession hook to trigger update jwt, the session parameter can be use here!
-      if (trigger === 'update') {
+      if (trigger === "update") {
         if (session.data.user.name) token.name = session.data.user.name;
         if (session.data.user.image) token.picture = session.data.user.image;
         return token;
