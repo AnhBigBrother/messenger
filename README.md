@@ -7,7 +7,7 @@ Real-time chat app using Next.js(v14), MongoDB for database, Pusher to handle we
 DB_URI: Mongodb uri   
 DB_NAME: Database name  
 
-NEXTAUTH_URL: Url of the app, http://localhost:3000 if run local
+NEXTAUTH_URL: Url of the app, http://localhost:3000 if run local  
 NEXTAUTH_SECRET: Secret for next-auth to sign jwt  
 
 GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET: Google oauth keys **_--> setup google oauth app: [https://console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials)_**  
